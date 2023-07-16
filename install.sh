@@ -13,6 +13,20 @@ else
     exit 1
 fi
 
+echo "please format your drive accordingly before continuing:"
+echo "dev/sda1 = boot"
+echo "dev/sda2 = swap"
+echo "dev/sda3 = root"
+echo "type 'y' to show you understand this and wish to continue"
+read CONFIRMATION
+
+if [ $CONFIRMATION = "y"]
+    echo "continuing..."
+else
+    echo "exiting script"
+    exit 1
+fi
+
 echo "formatting drives ..."
 mkfs.ext4 /dev/sda3
 mkfs.fat -F 32 /dev/sda1
