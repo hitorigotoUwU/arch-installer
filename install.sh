@@ -6,7 +6,8 @@ echo "im not responcible if this script causes any damage."
 echo "type 'y' to show you understand this and wish to continue"
 read CONFIRMATION
 
-if [ $CONFIRMATION = "y"]
+if [[ $CONFIRMATION = "y" ]]
+then
     echo "continuing..."
 else
     echo "exiting script"
@@ -16,11 +17,12 @@ fi
 echo "please format your drive accordingly before continuing:"
 echo "dev/sda1 = boot"
 echo "dev/sda2 = swap"
-echo "dev/sda3 = root"
+echo "dev/sda3 = boot"
 echo "type 'y' to show you understand this and wish to continue"
 read CONFIRMATION
 
-if [ $CONFIRMATION = "y"]
+if [[ $CONFIRMATION = "y" ]]
+then
     echo "continuing..."
 else
     echo "exiting script"
@@ -41,7 +43,8 @@ swapon /dev/sda2
 echo "would you like to install nvidia drivers? (y/n)"
 read CONFIRMATION
 
-if [ $CONFIRMATION = "y"]
+if [[ $CONFIRMATION = "y" ]]
+then
     echo "pacstrapping stuff w/ nvidia ..."
     pacstrap -K /mnt linux linux-firmware base base-devel grub efibootmgr iwd dhcpcd vim hyfetch git nvidia-dkms linux-headers --noconfirm
 else
