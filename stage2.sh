@@ -1,9 +1,12 @@
 #!/bin/bash
+
+echo "chroot successful ..."
+echo "executing stage 2 ..."
 echo "time & locale stuff ..."
 ln -sf /usr/share/zoneinfo/Australia/Brisbane /etc/localtime
 sed -i 's/^#en_AU.UTF-8 UTF-8/en_AU.UTF-8 UTF-8/' /etc/locale.gen
-locale-gen
 touch /etc/locale.conf && echo "LANG=en_AU.UTF-8" > /etc/locale.conf
+locale-gen
 
 echo "what would you like the system hostname to be?"
 read HOSTNAME

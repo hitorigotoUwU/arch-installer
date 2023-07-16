@@ -1,8 +1,9 @@
 #!/bin/bash
 echo "WARNING !!!"
 echo "this is a personal script mainly just meant for myself."
+echo "it is also a work in progress."
 echo "it could very well have issues with your setup."
-echo "im not responcible if this script causes any damage."
+echo "im not responsible if this script causes any damage."
 echo "type 'y' to show you understand this and wish to continue"
 read CONFIRMATION
 
@@ -14,12 +15,21 @@ else
     exit 1
 fi
 
-echo "please format your drive accordingly before continuing:"
-echo "dev/sda1 = boot"
-echo "dev/sda2 = swap"
-echo "dev/sda3 = boot"
+echo "please partition your drive accordingly before continuing:"
+echo "/dev/sda1 will be used for boot"
+echo "/dev/sda2 will be used as swap"
+echo "/dev/sda3 will be used for boot"
 echo "type 'y' to show you understand this and wish to continue"
 read CONFIRMATION
+
+#make sure user actually has /dev/sda3 as a partition
+lsblk | grep -q sda3
+if [[ $? = 1 ]]
+then
+    echo "sda3 was not detected. you likely have not partitioned the drives properly."
+    echo "exiting script"
+    exit 1
+fi
 
 if [[ $CONFIRMATION = "y" ]]
 then
@@ -57,8 +67,9 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 # prepare for chroot
 mkdir -p /mnt/tmp
-curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/part2.sh -o /mnt/tmp/install-part2.sh
-chmod +x /mnt/tmp/install-part2.sh
+curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o /tmp/stage2.sh
+chmod +x /tmp/stage2.sh
+cp stage2.sh /mnt/tmp
 
-echo "chrooting ..."
-arch-chroot /mnt /bin/bash /tmp/install-part2.sh
+echo "attemtping to chroot and execute stage 2 ..."
+arch-chroot /mnt /bin/bash curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o /tmp/stage2.sh && chmod +x /tmp/stage2.sh && /tmp/stage2.sh
