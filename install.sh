@@ -61,4 +61,4 @@ curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/part2.s
 chmod +x /mnt/tmp/install-part2.sh
 
 echo "chrooting ..."
-arch-chroot /mnt /bin/bash /tmp/part2.sh
+arch-chroot /mnt /bin/bash /tmp/install-part2.sh
