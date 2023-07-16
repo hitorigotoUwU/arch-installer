@@ -29,3 +29,6 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 echo "configuring grub ..."
 grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
+
+#delete file after use
+rm ./stage2.sh

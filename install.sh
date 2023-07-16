@@ -50,7 +50,7 @@ mkdir -p /mnt/boot/efi
 mount /dev/sda1 /mnt/boot/efi
 swapon /dev/sda2
 
-echo "would you like to install nvidia drivers? (y/n)"
+echo "would you like to pacstrap with nvidia drivers? (y/n)"
 read CONFIRMATION
 
 if [[ $CONFIRMATION = "y" ]]
@@ -65,11 +65,24 @@ fi
 echo "creating the fstab ..."
 genfstab -U /mnt >> /mnt/etc/fstab
 
-# prepare for chroot
-mkdir -p /mnt/tmp
-curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o /tmp/stage2.sh
-chmod +x /tmp/stage2.sh
-cp stage2.sh /mnt/tmp
-
+# seems to fail sometimes bc it cant execute curl when chrooting
+# might be best to merge this and stage 2 in the future
+# and have all commands executed in the chroot
+# just run with arch-chroot /mnt $COMMAND
 echo "attemtping to chroot and execute stage 2 ..."
-arch-chroot /mnt /bin/bash curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o /tmp/stage2.sh && chmod +x /tmp/stage2.sh && /tmp/stage2.sh
+arch-chroot /mnt /bin/curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o stage2.sh
+arch-chroot /mnt /bin/chmod +x stage2.sh
+arch-chroot /mnt ./stage2.sh
+
+# check for error output
+if [[ $? = 1 ]]
+then
+    echo "failed to chroot for whatever reason."
+    echo "please type:"
+    echo "curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o stage2.sh; chmod +x stage2.sh; ./stage2.sh"
+    echo "attemtping to chroot without executing stage 2 automatically ..."
+    arch-chroot /mnt
+fi
+
+#delete file after use
+rm ./install.sh
