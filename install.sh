@@ -22,6 +22,15 @@ errorCheck() {
     fi
 }
 
+# check if stage2 file already exists
+ls | grep -q stage2.sh
+if [[ $? = 0 ]]
+then
+    prettyPrint "WARNING !!!"
+    echo "stage2 seems to have already been downloaded. attemtping to delete the stage2 file before continuing."
+    rm ./stage2.sh
+fi
+
 prettyPrint "WARNING !!!"
 echo "this is a personal script mainly just meant for myself."
 echo "it is also a work in progress."
@@ -115,9 +124,14 @@ errorCheck
 # and have all commands executed in the chroot
 # just run with arch-chroot /mnt $COMMAND
 prettyPrint "attemtping to chroot and execute stage 2 ..."
-arch-chroot /mnt /bin/curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o stage2.sh
-arch-chroot /mnt /bin/chmod +x stage2.sh
-arch-chroot /mnt ./stage2.sh
+ls | grep -q stage2.sh
+if [[ $? = 1 ]]
+then
+    arch-chroot /mnt /bin/curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o stage2.sh
+    arch-chroot /mnt /bin/chmod +x stage2.sh
+    arch-chroot /mnt ./stage2.sh
+fi
+
 
 # check for error output
 if [[ $? = 1 ]]
