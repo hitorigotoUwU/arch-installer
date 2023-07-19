@@ -24,6 +24,17 @@ errorCheck() {
 
 clear
 
+cat << "EOF"
+ _   _ _ _             _             _               ___           _       _____          _        _ _           
+| | | (_) |           (_)           | |             / _ \         | |     |_   _|        | |      | | |          
+| |_| |_| |_ ___  _ __ _  __ _  ___ | |_ ___  ___  / /_\ \_ __ ___| |__     | | _ __  ___| |_ __ _| | | ___ _ __ 
+|  _  | | __/ _ \| '__| |/ _` |/ _ \| __/ _ \/ __| |  _  | '__/ __| '_ \    | || '_ \/ __| __/ _` | | |/ _ \ '__|
+| | | | | || (_) | |  | | (_| | (_) | || (_) \__ \ | | | | | | (__| | | |  _| || | | \__ \ || (_| | | |  __/ |   
+\_| |_/_|\__\___/|_|  |_|\__, |\___/ \__\___/|___/ \_| |_/_|  \___|_| |_|  \___/_| |_|___/\__\__,_|_|_|\___|_|   
+                          __/ |                                                                                  
+                         |___/                                                         
+EOF
+
 prettyPrint "WARNING !!!"
 echo "this is a personal script mainly just meant for myself."
 echo "it is also a work in progress."
@@ -48,6 +59,8 @@ echo "/dev/sda2 will be used as swap"
 echo "/dev/sda3 will be used for boot"
 echo "type 'y' to show you understand this and wish to continue"
 read CONFIRMATION
+
+clear
 
 #make sure user actually has /dev/sda3 as a partition
 lsblk | grep -q sda3
@@ -89,12 +102,12 @@ read CONFIRMATION
 if [[ $CONFIRMATION = "i3" ]]
 then
     echo "using i3 ..."
-    PACKAGES = "$PACKAGES xorg i3 lightdm lightdm-gtk-greeter kitty"
-    i3 = true
+    PACKAGES="$PACKAGES xorg i3 lightdm lightdm-gtk-greeter kitty"
+    i3=true
 elif [[ $CONFIRMATION = "plasma" ]]
 then
     echo "using plasma ..."
-    PACKAGES = "$PACKAGES xorg plasma kitty"
+    PACKAGES="$PACKAGES xorg plasma kitty"
 else
     echo "not installing a DE ..."
 fi
@@ -104,8 +117,8 @@ read CONFIRMATION
 
 if [[ $CONFIRMATION = "y" ]]
 then
-    PACKAGES = "$PACKAGES linux-headers nvidia-dkms"
-    NVIDIA = true
+    PACKAGES="$PACKAGES linux-headers nvidia-dkms"
+    NVIDIA=true
 fi
 
 echo "would you like to install some aditional miscellaneous utilities? (y/n)"
@@ -113,7 +126,7 @@ read CONFIRMATION
 
 if [[ $CONFIRMATION = "y" ]]
 then
-    PACKAGES = "$PACKAGES hyfetch fish "
+    PACKAGES="$PACKAGES hyfetch fish "
 fi
 
 pacstrap -K /mnt $PACKAGES
@@ -139,14 +152,14 @@ arch-chroot /mnt /bin/chmod +x stage2.sh
 arch-chroot /mnt ./stage2.sh
 
 # make sure some variables are copied between the livecd and chroot
-if [[ $NVIDIA = "true" ]]
+if [[ $NVIDIA; ]]
 then
-    arch-chroot /mnt /bin/bash NVIDIA = true
+    arch-chroot /mnt /bin/bash NVIDIA=true
 fi
 
-if [[ $i3 = "true" ]]
+if [[ $i3; ]]
 then
-    arch-chroot /mnt /bin/bash i3 = true
+    arch-chroot /mnt /bin/bash i3=true
 fi
 
 # check for error output

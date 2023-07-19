@@ -61,14 +61,17 @@ then
     cd paru/
     makepkg -si
     cd /
+
     if [[ NVIDIA = "true" ]]
     then
         paru -S envycontrol
     fi
+
     if [[ i3 = "true" ]]
     then
         paru -S autotiling
     fi
+fi
 
 prettyPrint "install complete !!!"
 echo "would you like to restart? (y/n)"
