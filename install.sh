@@ -22,14 +22,7 @@ errorCheck() {
     fi
 }
 
-# check if stage2 file already exists
-ls | grep -q stage2.sh
-if [[ $? = 0 ]]
-then
-    prettyPrint "WARNING !!!"
-    echo "stage2 seems to have already been downloaded. attemtping to delete the stage2 file before continuing."
-    rm ./stage2.sh
-fi
+clear
 
 prettyPrint "WARNING !!!"
 echo "this is a personal script mainly just meant for myself."
@@ -96,11 +89,12 @@ read CONFIRMATION
 if [[ $CONFIRMATION = "i3" ]]
 then
     echo "using i3 ..."
-    PACKAGES = "$PACKAGES xorg i3 lightdm lightdm-gtk-greeter"
+    PACKAGES = "$PACKAGES xorg i3 lightdm lightdm-gtk-greeter kitty"
+    i3 = true
 elif [[ $CONFIRMATION = "plasma" ]]
 then
     echo "using plasma ..."
-    PACKAGES = "$PACKAGES xorg plasma"
+    PACKAGES = "$PACKAGES xorg plasma kitty"
 else
     echo "not installing a DE ..."
 fi
@@ -111,6 +105,15 @@ read CONFIRMATION
 if [[ $CONFIRMATION = "y" ]]
 then
     PACKAGES = "$PACKAGES linux-headers nvidia-dkms"
+    NVIDIA = true
+fi
+
+echo "would you like to install some aditional miscellaneous utilities? (y/n)"
+read CONFIRMATION
+
+if [[ $CONFIRMATION = "y" ]]
+then
+    PACKAGES = "$PACKAGES hyfetch fish "
 fi
 
 pacstrap -K /mnt $PACKAGES
@@ -119,19 +122,32 @@ prettyPrint "creating the fstab ..."
 genfstab -U /mnt >> /mnt/etc/fstab
 errorCheck
 
-# seems to fail sometimes bc it cant execute curl when chrooting
-# might be best to merge this and stage 2 in the future
-# and have all commands executed in the chroot
-# just run with arch-chroot /mnt $COMMAND
-prettyPrint "attemtping to chroot and execute stage 2 ..."
+# makes it easier to download the stage2 into the chroot
 ls | grep -q stage2.sh
-if [[ $? = 1 ]]
+if [[ $? = 0 ]]
 then
-    arch-chroot /mnt /bin/curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o stage2.sh
-    arch-chroot /mnt /bin/chmod +x stage2.sh
-    arch-chroot /mnt ./stage2.sh
+    rm ./stage2.sh
 fi
 
+# seems to fail sometimes bc it cant execute curl when chrooting
+# might be best to merge this and stage 2 in the future
+# and have all commands usually executed in the 
+# chroot just run with "arch-chroot /mnt $COMMAND"
+prettyPrint "attemtping to chroot and execute stage 2 ..."
+arch-chroot /mnt /bin/curl https://raw.githubusercontent.com/hitorigotoUwU/arch-installer/main/stage2.sh -o stage2.sh
+arch-chroot /mnt /bin/chmod +x stage2.sh
+arch-chroot /mnt ./stage2.sh
+
+# make sure some variables are copied between the livecd and chroot
+if [[ $NVIDIA = "true" ]]
+then
+    arch-chroot /mnt /bin/bash NVIDIA = true
+fi
+
+if [[ $i3 = "true" ]]
+then
+    arch-chroot /mnt /bin/bash i3 = true
+fi
 
 # check for error output
 if [[ $? = 1 ]]

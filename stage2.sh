@@ -12,6 +12,8 @@ prettyPrint() {
     echo "$DASHES"; echo "$STRING"; echo "$DASHES"
 }
 
+clear
+
 prettyPrint "chroot successful !!!"
 prettyPrint "executing stage 2 ..."
 prettyPrint "setting timezone ..."
@@ -46,6 +48,39 @@ sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 prettyPrint "installing bootloader ..."
 grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
+
+prettyPrint "extra utils ..."
+echo "would you like to install paru?"
+read CONFIRMATION
+
+if [[ $CONFIRMATION = "y" ]]
+then
+    echo "installing paru ..."
+    cd /tmp/
+    git clone https://github.com/Morganamilo/paru
+    cd paru/
+    makepkg -si
+    cd /
+    if [[ NVIDIA = "true" ]]
+    then
+        paru -S envycontrol
+    fi
+    if [[ i3 = "true" ]]
+    then
+        paru -S autotiling
+    fi
+
+prettyPrint "install complete !!!"
+echo "would you like to restart? (y/n)"
+read CONFIRMATION
+
+if [[ $CONFIRMATION = "y" ]]
+then
+    exit
+    umount -a
+    rm ./stage2.sh
+    reboot
+fi
 
 #delete file after use
 rm ./stage2.sh
