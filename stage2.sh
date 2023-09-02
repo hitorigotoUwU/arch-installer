@@ -50,16 +50,17 @@ grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 prettyPrint "install complete !!!"
-echo "would you like to restart? (y/n)"
+echo "exiting the chroot will cause an immediate restart"
+echo "would you like to exit the chroot now? (y/n)"
 read CONFIRMATION
 
 if [[ $CONFIRMATION = "y" ]]
 then
-    exit
-    umount -a
     rm ./stage2.sh
-    reboot
+    exit
 fi
+
+prettyPrint "continuing in chroot... "
 
 #delete file after use
 rm ./stage2.sh

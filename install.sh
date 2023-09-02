@@ -151,17 +151,6 @@ arch-chroot /mnt /bin/curl https://raw.githubusercontent.com/hitorigotoUwU/arch-
 arch-chroot /mnt /bin/chmod +x stage2.sh
 arch-chroot /mnt ./stage2.sh
 
-# make sure some variables are copied between the livecd and chroot
-if [[ $NVIDIA; ]]
-then
-    arch-chroot /mnt /bin/bash NVIDIA=true
-fi
-
-if [[ $i3; ]]
-then
-    arch-chroot /mnt /bin/bash i3=true
-fi
-
 # check for error output
 if [[ $? = 1 ]]
 then
@@ -175,3 +164,6 @@ fi
 
 #delete file after use
 rm ./install.sh
+
+umount -a
+reboot
